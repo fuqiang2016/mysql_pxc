@@ -1,0 +1,89 @@
+1.1 环境信息：
+node1，计算机名PXC1，IP地址192.168.1.100, 安装组件: lvs/keepalived/pxc-cluster
+node2，计算机名PXC2，IP地址192.168.1.110, 安装组件: lvs/keepalived/pxc-cluster
+node3，计算机名PXC3，IP地址192.168.1.120, 安装组件: pxc-cluster
+
+
+lvs服务器，计算机名lvsserver，IP地址192.168.1.121，vip为192.168.1.100
+操作系统均为：Centos 7.6 64位
+
+1.2 安装组件
+1.2.1 安装依赖
+yum install openssl-devel popt-devel libnl* -y
+
+1.2.2 安装lvs
+yum install -y ipvsadm
+
+1.2.3 安装keepalived
+yum install -y keepalived
+
+1.2.4 配置路由转发
+vim /etc/sysctl.conf 
+net.ipv4.ip_forward = 1
+sysctl -p
+
+1.2.5 关闭防火墙及selinux
+systemctl stop firewalld
+systemctl disable firewalld
+sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config
+
+1.2.6 安装mysql
+mysql采用二进制部署，版本为mysql-5.7.23-linux-glibc2.12-x86_64.tar.gz
+tar xvf mysql-5.7.23-linux-glibc2.12-x86_64.tar.gz #解压mysql包
+cp -rf mysql-5.7.23-linux-glibc2.12-x86_64 /usr/local/mysql #复制数据包至/usr/local/mysql下
+groupadd mysql && useradd -r -g mysql mysql #添加mysql用户
+chown -R mysql.mysql /usr/local/mysql #修改mysql目录权限
+
+#初始化mysql
+bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data --pid-file=/usr/local/mysql/data/mysql.pid
+#创建/etc/my.cnf
+[client]
+port=3306
+socket=/tmp/mysql.sock
+default-character-set=utf8
+
+[mysql]
+no-auto-rehash
+default-character-set=utf8
+
+[mysqld]
+user    = mysql
+port    = 3306
+basedir    = /usr/local/mysql
+datadir    = /usr/local/mysql/data
+socket    = /tmp/mysql.sock
+pid-file = /usr/local/mysql/data/mysql.pid
+default-storage-engine=INNODB
+log-error=/usr/local/mysql/logs/error.log
+skip_name_resolve = 1
+open_files_limit    = 65535
+back_log = 1024
+max_connections = 1500
+max_connect_errors = 1000000
+table_open_cache = 1024
+table_definition_cache = 1024
+table_open_cache_instances = 64
+thread_stack = 512K
+external-locking = FALSE
+max_allowed_packet = 32M
+sort_buffer_size = 16M
+
+#复制mysql执行程序至init.d
+cp support-files/mysql.server /etc/init.d/mysql 
+#修改mysql程序配置
+vim /etc/init.d/mysql
+basedir=/usr/local/mysql
+datadir=/usr/local/mysql/data
+#配置服务自启动
+chkconfig --add  mysql
+chkconfig mysql on
+
+#配置mysql环境变量
+vim /etc/profile
+export PATH=/usr/local/mysql/bin:$PATH
+source /etc/profile
+
+#修改mysql初始密码
+SET PASSWORD = PASSWORD("root")
+FLUSH PRIVILEGES
+
