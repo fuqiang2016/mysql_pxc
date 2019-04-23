@@ -1,3 +1,8 @@
+参考：
+https://www.520mwx.com/view/33133
+https://blog.csdn.net/geoffreychan/article/details/80499956
+https://www.percona.com/doc/percona-xtradb-cluster/5.7/install/yum.html#yum
+
 1.1 环境信息：
 node1，计算机名PXC1，IP地址192.168.1.100, 安装组件: lvs/keepalived/pxc-cluster
 node2，计算机名PXC2，IP地址192.168.1.110, 安装组件: lvs/keepalived/pxc-cluster
