@@ -2,4 +2,8 @@
 #获取yum源
 yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm
 #安装pxc 57
-yum install Percona-XtraDB-Cluster-57
+yum -y install Percona-XtraDB-Cluster-57
+#启动mysql服务
+systemctl enable mysql && systemctl start mysql
+#查看mysql初始密码
+grep 'temporary password' /var/log/mysqld.log
