@@ -12,6 +12,7 @@ CREATE USER 'sstuser'@'localhost' IDENTIFIED BY 'tahoecn.com';
 GRANT ALL ON *.* TO 'sstuser'@'localhost';
 FLUSH PRIVILEGES;
 #配置集群
+vim /etc/percona-xtradb-cluster.conf.d/wsrep.conf
 [mysqld]
 # Path to Galera library
 wsrep_provider=/usr/lib64/galera3/libgalera_smm.so
