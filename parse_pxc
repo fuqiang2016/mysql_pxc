@@ -1,0 +1,5 @@
+1.安装pxc程序
+#获取yum源
+yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+#安装pxc 57
+yum install Percona-XtraDB-Cluster-57
