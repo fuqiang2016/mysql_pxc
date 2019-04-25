@@ -1,0 +1,36 @@
+# Template my.cnf for PXC
+# Edit to your requirements.
+[client]
+socket=/var/lib/mysql/mysql.sock
+
+[mysqld]
+server-id=1
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+log-bin
+log_slave_updates
+expire_logs_days=7
+
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+slow_query_log = ON
+long_query_time = 2
+slow_query_log_file = slow.log
+
+log_timestamps = SYSTEM
+
+max_connections = 100000
+
+character_set_server=utf8
+collation_server=utf8_unicode_ci
+
+max_allowed_packet = 16M
+optimizer_search_depth = 0
+max_execution_time = 0
+innodb_buffer_pool_size = 4G
+innodb_buffer_pool_instances = 4
+innodb_log_file_size = 300M
+
