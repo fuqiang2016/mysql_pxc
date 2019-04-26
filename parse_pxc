@@ -63,3 +63,5 @@ systemctl start mysql #第N个节点
 #查看pxc服务
 show status like 'wsrep%';
 
+#修改用户 （切记所有 Node 都必须执行，否则无法远程连接，因为 User 表属于特殊表，update 后无法同步）
+update mysql.user set Host = '%' where User = 'root';
